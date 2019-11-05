@@ -5,12 +5,7 @@
 using namespace std;
 
 void dibujar_torres(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_uno_a_torre_dos(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_uno_a_torre_tres(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_dos_a_torre_uno(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_dos_a_torre_tres(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_tres_a_torre_uno(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
-void mover_torre_tres_a_torre_dos(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[]);
+void mover_disco(int cantidad_discos, char torre_origen[], char torre_destino[]);
 int cantidad_esperada(int cantidad_discos);
 int mostrar_menu();
 
@@ -26,7 +21,6 @@ int main(int argc, char const *argv[])
     char *torre_tres = new char[cantidad_discos];
     char *torre_copia = new char[cantidad_discos];
 
-    // inicializar los arrays
     for (int i = 1; i <= cantidad_discos; i++)
     {
         torre_copia[i - 1] = i + '0';
@@ -35,7 +29,6 @@ int main(int argc, char const *argv[])
         torre_tres[i - 1] = ' ';
     }
 
-    // mostramos la opciones de menu
     bool iniciar = true;
     int cantidad_jugadas = 0;
 
@@ -54,7 +47,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_uno_a_torre_dos(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_uno, torre_dos);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             case 2: // 1 -> 3
@@ -62,7 +55,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_uno_a_torre_tres(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_uno, torre_tres);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             case 3: // 2 -> 1
@@ -70,7 +63,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_dos_a_torre_uno(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_dos, torre_uno);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             case 4: // 2 -> 3
@@ -78,7 +71,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_dos_a_torre_tres(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_dos, torre_tres);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             case 5:
@@ -86,7 +79,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_tres_a_torre_uno(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_tres, torre_uno);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             case 6:
@@ -94,7 +87,7 @@ int main(int argc, char const *argv[])
                 cantidad_jugadas++;
                 cout << "LIMITE DE JUGADAS: " << cantidad_esperada(cantidad_discos) << endl;
                 cout << "CANTIDAD DE JUGADAS: " << cantidad_jugadas << endl;
-                mover_torre_tres_a_torre_dos(cantidad_discos, torre_uno, torre_dos, torre_tres);
+                mover_disco(cantidad_discos, torre_tres, torre_dos);
                 dibujar_torres(cantidad_discos, torre_uno, torre_dos, torre_tres);
                 break;
             default:
@@ -102,36 +95,42 @@ int main(int argc, char const *argv[])
                 break;
         }
 
-        for (int i = 0; i < cantidad_discos; i++)
-        {
-            if (torre_copia[i] != torre_tres[i])
-            {
-                iniciar = true;
-                break;
-            }
-            cout << "FELICIDADES GANASTE!" << endl;
-            iniciar = false;
-            break;
-        }
+        bool estado = false;
 
-        if (cantidad_jugadas > cantidad_esperada(cantidad_discos))
+        if (cantidad_jugadas > cantidad_esperada(cantidad_discos) & estado == false)
         {
-            cout << "PERDISTE!" << endl;
+            cout << "PERDISTE! LIMITE DE JUGADAS SUPERADO" << endl;
             cout << "\nFIN DEL JUEGO" << endl;
             iniciar = false;
         }
-        
+
+        if (iniciar)
+        {
+            for (int i = 0; i < cantidad_discos; i++)
+            {
+                if (torre_copia[i] != torre_tres[i])
+                {
+                    iniciar = true;
+                    break;
+                }
+                cout << "FELICIDADES GANASTE!" << endl;
+                iniciar = false;
+                estado = true;
+                break;
+            }
+        }
+
     } while (iniciar);
 
     return 0;
 }
 
-void mover_torre_uno_a_torre_dos(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
+void mover_disco(int cantidad_discos, char torre_origen[], char torre_destino[])
 {
-    int pos;
+        int pos;
     for (int i = 0; i < cantidad_discos; i++)
     {
-        if (torre_uno[i] != ' ')
+        if (torre_origen[i] != ' ')
         {
             pos = i;
            break;
@@ -140,201 +139,25 @@ void mover_torre_uno_a_torre_dos(int cantidad_discos, char torre_uno[], char tor
 
     for (int i = cantidad_discos - 1; i >= 0; i--)
     {
-        if (torre_dos[i] == ' ') // 4
+        if (torre_destino[i] == ' ') // 4
         {
             if (i == cantidad_discos - 1)
             {
-                torre_dos[i] = torre_uno[pos];
-                torre_uno[pos] = ' ';
+                torre_destino[i] = torre_origen[pos];
+                torre_origen[pos] = ' ';
             } else
             {
-                int valor_uno = torre_uno[pos] - '0';
-                int valor_dos = torre_dos[i + 1] - '0';
+                int valor_uno = torre_origen[pos] - '0';
+                int valor_dos = torre_destino[i + 1] - '0';
                 if (valor_uno < valor_dos)
                 {
-                    torre_dos[i] = torre_uno[pos];
-                    torre_uno[pos] = ' ';
+                    torre_destino[i] = torre_origen[pos];
+                    torre_origen[pos] = ' ';
                 }
                 break;
             }
         }
-    }
-}
-
-void mover_torre_uno_a_torre_tres(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
-{
-    int pos;
-    for (int i = 0; i < cantidad_discos; i++)
-    {
-        if (torre_uno[i] != ' ')
-        {
-            pos = i;
-            break;
-        }
-    }
-
-    for (int i = cantidad_discos - 1; i >= 0; i--)
-    {
-        if (torre_tres[i] == ' ') // 4
-        {
-            if (i == cantidad_discos - 1)
-            {
-                torre_tres[i] = torre_uno[pos];
-                torre_uno[pos] = ' ';
-            } else
-            {
-                int valor_uno = torre_uno[pos] - '0';
-                int valor_dos = torre_tres[i + 1] - '0';
-                if (valor_uno < valor_dos)
-                {
-                    torre_tres[i] = torre_uno[pos];
-                    torre_uno[pos] = ' ';
-                }
-                break;
-            }
-        }
-    }
-}
-
-void mover_torre_dos_a_torre_uno(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
-{
-    int pos;
-    for (int i = 0; i < cantidad_discos; i++)
-    {
-        if (torre_dos[i] != ' ')
-        {
-            pos = i;
-           break;
-        }
-    }
-
-    for (int i = cantidad_discos - 1; i >= 0; i--)
-    {
-        if (torre_uno[i] == ' ') // 4
-        {
-            if (i == cantidad_discos - 1)
-            {
-                torre_uno[i] = torre_dos[pos];
-                torre_dos[pos] = ' ';
-            } else
-            {
-                int valor_uno = torre_dos[pos] - '0';
-                int valor_dos = torre_uno[i + 1] - '0';
-                if (valor_uno < valor_dos)
-                {
-                    torre_uno[i] = torre_dos[pos];
-                    torre_dos[pos] = ' ';
-                }
-                break;
-            }
-        }
-    }
-}
-
-void mover_torre_dos_a_torre_tres(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
-{
-    int pos;
-    for (int i = 0; i < cantidad_discos; i++)
-    {
-        if (torre_dos[i] != ' ')
-        {
-            pos = i;
-           break;
-        }
-    }
-
-    for (int i = cantidad_discos - 1; i >= 0; i--)
-    {
-        if (torre_tres[i] == ' ') // 4
-        {
-            if (i == cantidad_discos - 1)
-            {
-                torre_tres[i] = torre_dos[pos];
-                torre_dos[pos] = ' ';
-            } else
-            {
-                int valor_uno = torre_dos[pos] - '0';
-                int valor_dos = torre_tres[i + 1] - '0';
-                if (valor_uno < valor_dos)
-                {
-                    torre_tres[i] = torre_dos[pos];
-                    torre_dos[pos] = ' ';
-                }
-                break;
-            }
-        }
-    }
-}
-
-void mover_torre_tres_a_torre_uno(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
-{
-    int pos;
-    for (int i = 0; i < cantidad_discos; i++)
-    {
-        if (torre_tres[i] != ' ')
-        {
-            pos = i;
-           break;
-        }
-    }
-
-    for (int i = cantidad_discos - 1; i >= 0; i--)
-    {
-        if (torre_uno[i] == ' ') // 4
-        {
-            if (i == cantidad_discos - 1)
-            {
-                torre_uno[i] = torre_tres[pos];
-                torre_tres[pos] = ' ';
-            } else
-            {
-                int valor_uno = torre_tres[pos] - '0';
-                int valor_dos = torre_uno[i + 1] - '0';
-                if (valor_uno < valor_dos)
-                {
-                    torre_uno[i] = torre_tres[pos];
-                    torre_tres[pos] = ' ';
-                }
-                break;
-            }
-        }
-    }
-}
-
-
-void mover_torre_tres_a_torre_dos(int cantidad_discos, char torre_uno[], char torre_dos[], char torre_tres[])
-{
-    int pos;
-    for (int i = 0; i < cantidad_discos; i++)
-    {
-        if (torre_tres[i] != ' ')
-        {
-            pos = i;
-           break;
-        }
-    }
-
-    for (int i = cantidad_discos - 1; i >= 0; i--)
-    {
-        if (torre_dos[i] == ' ') // 4
-        {
-            if (i == cantidad_discos - 1)
-            {
-                torre_dos[i] = torre_tres[pos];
-                torre_tres[pos] = ' ';
-            } else
-            {
-                int valor_uno = torre_tres[pos] - '0';
-                int valor_dos = torre_dos[i + 1] - '0';
-                if (valor_uno < valor_dos)
-                {
-                    torre_dos[i] = torre_tres[pos];
-                    torre_tres[pos] = ' ';
-                }
-                break;
-            }
-        }
-    }
+    }   
 }
 
 int mostrar_menu()
